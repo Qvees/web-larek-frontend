@@ -10,9 +10,13 @@ export class Order extends Form<IOrderForm> {
 
     set phone(value: string) {
         (this.container.elements.namedItem('phone') as HTMLInputElement).value = value;
+
     }
 
     set email(value: string) {
         (this.container.elements.namedItem('email') as HTMLInputElement).value = value;
+    }
+    set adress(value:string){
+        (this.container.elements.namedItem('adress') as HTMLInputElement).value = value;
     }
 }

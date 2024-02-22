@@ -46,6 +46,7 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "format-number": "^3.0.0",
     "lodash": "^4.17.21"
   }
 }

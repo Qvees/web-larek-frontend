@@ -28,6 +28,7 @@ export type FormErrors = Partial<Record<keyof IOrder, string>>;
 export interface IAppState {
     catalog: IProductList;
     basket: string[];
+    preview: string | null;
     order: IOrder | null;
     loading: boolean;//???
 }

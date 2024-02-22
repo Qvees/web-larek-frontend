@@ -14,6 +14,7 @@ export class ProductItem extends Model<IProductList> {
     title: string;
     price: number;
     category:string;
+    button?:HTMLButtonElement;
 
 }
 
