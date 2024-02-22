@@ -12,11 +12,14 @@ export interface IProductList{
 export interface IOrderForm {
     email: string;
     phone: string;
-    adress:string;
+    address:string;
+    paymentMethod:string;
+
 }
 
 export interface IOrder extends IOrderForm {
     items: string[]
+    paymentMethod:string;
 }
 
 export interface IOrderResult {

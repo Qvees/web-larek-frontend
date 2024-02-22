@@ -1,5 +1,6 @@
 import { Api, ApiListResponse } from './base/api';
 import {IOrder, IOrderResult,IProductList} from "../types/index";
+import { Contacts } from './Contacts';
 
 export interface IShopAPI {
     getProductList: () => Promise<IProductList[]>; // получаем не полное описание 

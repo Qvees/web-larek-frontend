@@ -19,7 +19,7 @@ import { Success } from './components/common/Success';
 import { Modal } from './components/common/Modal';
 import { Basket } from './components/common/Basket';
 import { Order } from './components/Order';
-
+import { Contacts } from './components/Contacts';
 
 const events = new EventEmitter();
 const api = new ShopAPI(CDN_URL, API_URL);
@@ -37,6 +37,7 @@ const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
 const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
 const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 const cardBasketModal = ensureElement<HTMLTemplateElement>('#card-basket');
+const contactTemplate = ensureElement<HTMLTemplateElement>('#contacts');
 
 //элементы
 const modalAction = document.querySelector('.modal__actions');
@@ -45,7 +46,8 @@ const doOrderButton = modalAction.querySelector('.button');
 // Переиспользуемые части интерфейса
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 const order = new Order(cloneTemplate(orderTemplate), events);
-
+const contact = new Contacts(cloneTemplate(contactTemplate), events);
+console.log(order);
 
 // Связываем логику загрузки товаров в корзину событием load окна
 window.addEventListener('load', () => {
@@ -81,9 +83,9 @@ events.on<CatalogChangeEvent>('items:changed', () => {
 
 // Изменилось состояние валидации формы
 events.on('formErrors:change', (errors: Partial<IOrderForm>) => {
-	const { email, phone, adress } = errors;
-	order.valid = !email && !phone && !adress;
-	order.errors = Object.values({ phone, email, adress })
+	const { email, phone, address } = errors;
+	order.valid = !email && !phone && !address;
+	order.errors = Object.values({ phone, email, address })
 		.filter((i) => !!i)
 		.join('; ');
 });
@@ -137,11 +139,45 @@ events.on('basket:open', () => {
 events.on('order:open', () => {
 	modal.render({
 		content: order.render({
-			adress: '',
+			address: '',
 			valid: false,
 			errors: [],
 		}),
 	});
+});
+
+// Подписываемся на событие открытия формы для ввода контактной информации
+events.on('contact:open', () => {
+	modal.render({
+		content: contact.render({
+			phone: '',
+			email: '',
+			valid: false,
+			errors: [],
+		}),
+	});
+});
+
+
+//реализация отмравки, пока есть ошибка с отправкой говорит нет метода оплаты хотя в order.getPaymentMethod есть способ оплаты 
+events.on('payment:submit', () => {
+	api
+		.orderProduct(appData.order)
+		.then((result) => {
+			const success = new Success(cloneTemplate(successTemplate), {
+				onClick: () => {
+					modal.close();
+					appData.clearBasket();
+					appData.order.paymentMethod = order.getPaymentMethod();
+				},
+			});
+			modal.render({
+				content: success.render(),
+			});
+		})
+		.catch((err) => {
+			console.log(err);
+		});
 });
 
 // Блокируем прокрутку страницы если открыта модалка

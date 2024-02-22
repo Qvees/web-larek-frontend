@@ -2,6 +2,7 @@ import _ from "lodash";
 
 import {Model} from "./base/Model";
 import {FormErrors, IAppState, IBasketItem, IProductList, IOrder, IOrderForm} from "../types";
+import { Contacts } from './Contacts';
 
 export type CatalogChangeEvent = {
     catalog: ProductItem[]
@@ -25,8 +26,9 @@ export class AppState extends Model<IAppState> {
     order: IOrder = {
         email: '',
         phone: '',
-        adress:'',
-        items: []
+        address:'',
+        items: [],
+        paymentMethod:''
     };
     preview: string | null;
     formErrors: FormErrors = {};
@@ -74,14 +76,8 @@ export class AppState extends Model<IAppState> {
 
     validateOrder() {
         const errors: typeof this.formErrors = {};
-        if (!this.order.email) {
-            errors.email = 'Необходимо указать email';
-        }
-        if (!this.order.phone) {
-            errors.phone = 'Необходимо указать телефон';
-        }
-        if (!this.order.adress){
-            errors.adress = 'Необходимо указать адресс'
+        if (!this.order.address){
+            errors.address = 'Необходимо указать адресс'
         }
         this.formErrors = errors;
         this.events.emit('formErrors:change', this.formErrors);
