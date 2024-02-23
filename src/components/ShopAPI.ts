@@ -1,10 +1,10 @@
 import { Api, ApiListResponse } from './base/api';
-import {IOrder, IOrderResult,IProductList} from "../types/index";
+import {IOrder, IOrderResult,IProduct} from "../types/index";
 import { Contacts } from './Contacts';
 
 export interface IShopAPI {
-    getProductList: () => Promise<IProductList[]>; // получаем не полное описание 
-    getProductItem: (id: string) => Promise<IProductList>;// получаем объекты с полным описание 
+    getProductList: () => Promise<IProduct[]>; // получаем не полное описание 
+    getProductItem: (id: string) => Promise<IProduct>;// получаем объекты с полным описание 
     orderProduct: (order: IOrder) => Promise<IOrderResult>;
 }
 
@@ -16,9 +16,9 @@ export class ShopAPI extends Api implements IShopAPI {
         this.cdn = cdn;
     }
 
-    getProductItem(id: string): Promise<IProductList> {
+    getProductItem(id: string): Promise<IProduct> {
         return this.get(`/product/${id}`).then(
-            (item: IProductList) => ({
+            (item: IProduct) => ({
                 ...item,
                 image: this.cdn + item.image,
             })
@@ -26,8 +26,8 @@ export class ShopAPI extends Api implements IShopAPI {
     }
 
 
-    getProductList(): Promise<IProductList[]> {
-        return this.get('/product').then((data: ApiListResponse<IProductList>) =>
+    getProductList(): Promise<IProduct[]> {
+        return this.get('/product').then((data: ApiListResponse<IProduct>) =>
             data.items.map((item) => ({
                 ...item,
                 image: this.cdn + item.image
@@ -39,6 +39,7 @@ export class ShopAPI extends Api implements IShopAPI {
         return this.post('/order', order).then(
             (data: IOrderResult) => data
         );
+      
     }
 
 }

@@ -6,7 +6,7 @@ import {Modal} from '../components/common/Modal'
 import { AppState } from "./AppData";
 
 export class Order extends Form<IOrderForm> {
-    private paymentMethod: 'card' | 'cash' | null = null; // Свойство для хранения выбранного метода оплаты
+    private paymentMethod: 'online' | 'offline' | null = null; // Свойство для хранения выбранного метода оплаты
 
     constructor(container: HTMLFormElement, events: IEvents) {
         super(container, events);
@@ -24,7 +24,7 @@ export class Order extends Form<IOrderForm> {
         const onlineButton = this.container.querySelector('button[name="card"]') as HTMLButtonElement;
         if (onlineButton) {
             onlineButton.addEventListener('click', () => {
-                this.paymentMethod = 'card'; // Устанавливаем метод оплаты "Онлайн"
+                this.paymentMethod = 'online'; // Устанавливаем метод оплаты "Онлайн"
                 this.updatePaymentButtons(); // Обновляем стили кнопок оплаты
             });
         }
@@ -33,7 +33,7 @@ export class Order extends Form<IOrderForm> {
         const cashButton = container.querySelector('button[name="cash"]') as HTMLButtonElement;
         if (cashButton) {
             cashButton.addEventListener('click', () => {
-                this.paymentMethod = 'cash'; // Устанавливаем метод оплаты "При получении"
+                this.paymentMethod = 'offline'; // Устанавливаем метод оплаты "При получении"
                 this.updatePaymentButtons(); // Обновляем стили кнопок оплаты
             });
         }
@@ -47,25 +47,26 @@ export class Order extends Form<IOrderForm> {
         onlineButton?.classList.remove('button_alt-active'); 
         cashButton?.classList.remove('button_alt-active'); 
     
-        if (this.paymentMethod === 'card') {
+        if (this.paymentMethod === 'online') {
             onlineButton?.classList.add('button_alt-active'); 
             
-        } else if (this.paymentMethod === 'cash') {
+        } else if (this.paymentMethod === 'offline') {
             cashButton?.classList.add('button_alt-active'); 
         }
     }
 
+    
+
      // Метод для обработки нажатия кнопки "Далее"
      handleNextButtonClick() {
         const addressInput = this.container.querySelector('input[name="address"]') as HTMLInputElement;
-        if (addressInput && this.paymentMethod) {
+        if (addressInput && this.paymentMethod ) {
             
             // Отправляем событие о необходимости открыть форму контактов
             this.events.emit('contact:open');
         } else {
             console.error('Не указан адрес или способ оплаты');
         }
-        console.log(this.container)
     }
 
     getPaymentMethod(){

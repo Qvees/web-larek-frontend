@@ -14,7 +14,7 @@ export class Basket extends Component<IBasketView> {
 	protected _list: HTMLElement;
 	protected _total: HTMLElement;
 	protected _button: HTMLElement;
-	protected _orderButton: HTMLElement;
+	protected _orderButton: HTMLButtonElement;
 	protected itemsInBasket: ProductItem[]; // Массив для хранения товаров в корзине
 	protected _counter: HTMLElement;
 
@@ -23,7 +23,9 @@ export class Basket extends Component<IBasketView> {
 		this.itemsInBasket = [];
 		this._list = container.querySelector('.basket__list') as HTMLElement;
 		this._total = container.querySelector('.basket__price') as HTMLElement;
-		this._orderButton = container.querySelector('.basket__button');
+		this._orderButton = container.querySelector(
+			'.basket__button'
+		) as HTMLButtonElement;
 		this._button = document.querySelector('.header__basket') as HTMLElement;
 		this._counter = this._button.querySelector(
 			'.header__basket-counter'
@@ -42,19 +44,6 @@ export class Basket extends Component<IBasketView> {
 		}
 	}
 
-	set items(items: HTMLElement[]) {
-		this._list.innerHTML = '';
-		if (items.length) {
-			this._list.append(...items);
-		} else {
-			this._list.innerHTML = '<p>Корзина пуста</p>';
-		}
-	}
-
-	set selected(items: string[]) {
-		this.setDisabled(this._button, items.length === 0);
-	}
-
 	set total(total: number) {
 		this.setText(this._total, total.toString());
 	}
@@ -62,6 +51,7 @@ export class Basket extends Component<IBasketView> {
 	addItemToBasket(item: ProductItem) {
 		this.itemsInBasket.push(item); // Добавляем товар в массив корзины
 		this.renderBasketItems();
+		this.updateTotal();
 		localStorage.setItem('basketItems', JSON.stringify(this.itemsInBasket));
 		this.updateCounter();
 	}
@@ -69,8 +59,20 @@ export class Basket extends Component<IBasketView> {
 	removeItemFromBasket(item: ProductItem) {
 		this.itemsInBasket = this.itemsInBasket.filter((i) => i !== item);
 		this.renderBasketItems();
+		this.updateTotal();
 		localStorage.setItem('basketItems', JSON.stringify(this.itemsInBasket));
 		this.updateCounter();
+	}
+	updateTotal() {
+		let total = 0;
+
+		// Проходим по всем товарам в корзине и суммируем их цены
+		this.itemsInBasket.forEach((item) => {
+			total += item.price;
+		});
+		this.getItemsInBasket();
+		// Устанавливаем общую цену в элемент интерфейса
+		return (this.total = total);
 	}
 
 	renderBasketItems() {
@@ -92,9 +94,35 @@ export class Basket extends Component<IBasketView> {
 			this._list.appendChild(newItem);
 		});
 	}
+
 	getItemsInBasket(): ProductItem[] {
+		if (this.itemsInBasket.length === 0) {
+			this._list.innerHTML = '<p>Корзина пуста</p>';
+			this.setDisabled(this._orderButton, true);
+		} else {
+			this.setDisabled(this._orderButton, false);
+		}
+
 		return this.itemsInBasket;
 	}
+
+	getItemId() {
+		return this.itemsInBasket.map((item) => item.id);
+	}
+
+	clearBasket() {
+		// Очистка массива товаров в корзине
+		this.itemsInBasket = [];
+		// Обновление отображения корзины
+		this.renderBasketItems();
+		// Обновление общей суммы
+		this.updateTotal();
+		// Очистка localstorage
+		localStorage.removeItem('basketItems');
+		// Обновление счетчика
+		this.updateCounter();
+	}
+
 	// Метод для обновления счетчика
 	private updateCounter() {
 		this._counter.textContent = this.itemsInBasket.length.toString();

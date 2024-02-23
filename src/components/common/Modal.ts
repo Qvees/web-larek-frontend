@@ -1,7 +1,7 @@
 import {Component} from "../base/Component";
 import {ensureElement} from "../../utils/utils";
 import {IEvents} from "../base/events";
-import { IProductList } from "../../types";
+import { IProduct } from "../../types";
 
 interface IModalData {
     content: HTMLElement;

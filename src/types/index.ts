@@ -1,5 +1,5 @@
 
-export interface IProductList{
+export interface IProduct{
     id: string,
     description: string,
     image: string,
@@ -9,31 +9,32 @@ export interface IProductList{
     error?:string
 }
 
-export interface IOrderForm {
-    email: string;
-    phone: string;
-    address:string;
-    paymentMethod:string;
+type PaymentMethod = 'online' | 'offline';
 
-}
+export interface IOrderForm { 
+    email: string; 
+    phone: string; 
+    address: string; 
+    payment: PaymentMethod; 
+} 
 
 export interface IOrder extends IOrderForm {
-    items: string[]
-    paymentMethod:string;
+    items: string[];
+    total:number;
 }
 
 export interface IOrderResult {
     id: string;
+    total:number;
 }
 
 export type FormErrors = Partial<Record<keyof IOrder, string>>;
 
 export interface IAppState {
-    catalog: IProductList;
+    catalog: IProduct;
     basket: string[];
     preview: string | null;
     order: IOrder | null;
-    loading: boolean;//???
 }
 
-export type IBasketItem = Pick<IProductList, 'id' | 'title' | 'price'>
+export type IBasketItem = Pick<IProduct, 'id' | 'title' | 'price'>

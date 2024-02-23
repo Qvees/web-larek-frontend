@@ -1,5 +1,5 @@
 import { Component } from './base/Component';
-import { IProductList } from '../types';
+import { IProduct } from '../types';
 import { bem, createElement, ensureElement } from '../utils/utils';
 
 interface ICardActions {
@@ -11,7 +11,7 @@ export interface ICard<T> {
 	description?: string | string[];
 	image: string;
 	category: string;
-	price: number;
+	price:number;
 	button?: HTMLButtonElement;
 }
 
@@ -101,7 +101,7 @@ export class Card<T> extends Component<ICard<T>> {
 	}
 }
 
-export class CatalogItem extends Card<IProductList> {
+export class CatalogItem extends Card<IProduct> {
 	querySelector(arg0: string) {
 		throw new Error('Method not implemented.');
 	}
