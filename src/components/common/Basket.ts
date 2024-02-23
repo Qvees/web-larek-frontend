@@ -15,7 +15,7 @@ export class Basket extends Component<IBasketView> {
 	protected _total: HTMLElement;
 	protected _button: HTMLElement;
 	protected _orderButton: HTMLButtonElement;
-	protected itemsInBasket: ProductItem[]; // Массив для хранения товаров в корзине
+	protected itemsInBasket: ProductItem[];
 	protected _counter: HTMLElement;
 
 	constructor(container: HTMLElement, protected events: EventEmitter) {
@@ -67,8 +67,11 @@ export class Basket extends Component<IBasketView> {
 		let total = 0;
 
 		// Проходим по всем товарам в корзине и суммируем их цены
+		
 		this.itemsInBasket.forEach((item) => {
+			
 			total += item.price;
+			
 		});
 		this.getItemsInBasket();
 		// Устанавливаем общую цену в элемент интерфейса
@@ -76,16 +79,19 @@ export class Basket extends Component<IBasketView> {
 	}
 
 	renderBasketItems() {
+		let counter = 1;
 		this._list.innerHTML = '';
 		this.itemsInBasket.forEach((item) => {
 			const newItem = createElement<HTMLLIElement>('li', {
 				className: 'basket__item card card_compact',
 			});
 			newItem.innerHTML = `
+				<span class="basket__item-index">${counter}</span>
                 <span class="card__title">${item.title}</span>
                 <span class="card__price">${item.price} синапсов</span>
                 <button class="basket__item-delete card__button" aria-label="удалить"></button>
             `;
+			counter +=1;
 			newItem
 				.querySelector('.basket__item-delete')
 				?.addEventListener('click', () => {
