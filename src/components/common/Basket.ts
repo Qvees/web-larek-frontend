@@ -67,12 +67,11 @@ export class Basket extends Component<IBasketView> {
 		let total = 0;
 
 		// Проходим по всем товарам в корзине и суммируем их цены
-		
+
 		this.itemsInBasket.forEach((item) => {
-			
 			total += item.price;
-			
 		});
+
 		this.getItemsInBasket();
 		// Устанавливаем общую цену в элемент интерфейса
 		return (this.total = total);
@@ -91,7 +90,7 @@ export class Basket extends Component<IBasketView> {
                 <span class="card__price">${item.price} синапсов</span>
                 <button class="basket__item-delete card__button" aria-label="удалить"></button>
             `;
-			counter +=1;
+			counter += 1;
 			newItem
 				.querySelector('.basket__item-delete')
 				?.addEventListener('click', () => {

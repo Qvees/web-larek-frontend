@@ -5,7 +5,7 @@ import { API_URL, CDN_URL } from './utils/constants';
 import { EventEmitter } from './components/base/events';
 import { Page } from './components/Page';
 import { cloneTemplate, createElement, ensureElement } from './utils/utils';
-import { IOrderForm, IProduct } from './types';
+import { IOrderForm, IProduct } from './types/types';
 import { Model } from './components/base/Model';
 import _, { clone } from 'lodash';
 import { Component } from './components/base/Component';
@@ -69,6 +69,9 @@ events.on<CatalogChangeEvent>('items:changed', () => {
 		const card = new CatalogItem(cloneTemplate(cardCatalogTemplate), {
 			onClick: () => events.emit('card:select', item),
 		});
+		if (item.price === null) {
+			item.price = 0;
+		}
 		return card.render({
 			title: item.title,
 			image: item.image,
@@ -91,8 +94,16 @@ events.on('formErrors:change', (errors: Partial<IOrderForm>) => {
 
 // Изменилось одно из полей
 events.on(
-	/^order\..*:change/,
+	/^order\.(payment|address):change/,
 	(data: { field: keyof IOrderForm; value: 'offline' | 'online' }) => {
+		appData.setOrderField(data.field, data.value);
+	}
+);
+
+// отслеживание способа оплаты
+events.on(
+	'payment:changed',
+	(data: { field: 'payment'; value: 'online' | 'offline' | null }) => {
 		appData.setOrderField(data.field, data.value);
 	}
 );
@@ -124,6 +135,10 @@ events.on('card:select', (item: ProductItem) => {
 		addToBasketButton.disabled = true;
 		addToBasketButton.classList.add('disabled');
 		addToBasketButton.textContent = 'Товар уже в корзине';
+	} else if (item.price === 0) {
+		addToBasketButton.disabled = true;
+		addToBasketButton.classList.add('disabled');
+		addToBasketButton.textContent = 'Товар временно недоступен';
 	}
 
 	// кнопка добавления товара в корзину
@@ -192,7 +207,6 @@ events.on('payment:submit', () => {
 				{
 					onClick: () => {
 						modal.close();
-						basket.clearBasket();
 					},
 				},
 				total
@@ -202,6 +216,7 @@ events.on('payment:submit', () => {
 			modal.render({
 				content: success.render({}),
 			});
+			basket.clearBasket();
 		})
 		.catch((err) => {
 			console.log(err);

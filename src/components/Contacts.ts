@@ -1,5 +1,5 @@
 import { Form } from "./common/Form";
-import { IOrderForm } from "../types";
+import { IOrderForm } from "../types/types";
 import { EventEmitter, IEvents } from "./base/events";
 import { ensureElement } from "../utils/utils";
 import { Modal } from '../components/common/Modal'
@@ -39,11 +39,21 @@ export class Contacts extends Form<IOrderForm> {
         const phoneInput = this.container.querySelector('input[name="phone"]') as HTMLInputElement;
         const emailInput = this.container.querySelector('input[name="email"]') as HTMLInputElement;
         const submitButton = this.container.querySelector('button[type="submit"]') as HTMLButtonElement;
+         // Проверяем, что введенный номер телефона соответствует формату телефонного номера
+        const phonePattern = /^\+?\d{1,3}?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{2}[\s.-]?\d{2}$/;
+        const isPhoneValid = phonePattern.test(phoneInput.value.trim());
 
-        // Если оба поля заполнены, активируем кнопку "Оплатить", иначе деактивируем
-        if (phoneInput.value.trim() !== '' && emailInput.value.trim() !== '') {
+    // Проверяем, что введенный email соответствует формату адреса электронной почты
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const isEmailValid = emailPattern.test(emailInput.value.trim());
+        const formErrors = this.container.querySelector('.form__errors')
+
+        // Если оба поля заполнены, активируем кнопку
+        if (isPhoneValid && isEmailValid) {
+            formErrors.textContent = ''
             submitButton.disabled = false;
         } else {
+            formErrors.textContent = 'Введите почту и номер телефона'
             submitButton.disabled = true;
         }
     }

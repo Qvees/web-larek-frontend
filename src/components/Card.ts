@@ -1,5 +1,5 @@
 import { Component } from './base/Component';
-import { IProduct } from '../types';
+import { IProduct } from '../types/types';
 import { bem, createElement, ensureElement } from '../utils/utils';
 
 interface ICardActions {
@@ -11,7 +11,7 @@ export interface ICard<T> {
 	description?: string | string[];
 	image: string;
 	category: string;
-	price:number;
+	price: number;
 	button?: HTMLButtonElement;
 }
 
@@ -69,17 +69,31 @@ export class Card<T> extends Component<ICard<T>> {
 	}
 
 	set category(value: string) {
+		if (value === 'софт-скил') {
+			this._category.classList.add('card__category_soft');
+		} else if (value === 'другое') {
+			this._category.classList.add('card__category_other');
+		} else if (value === 'дополнительное') {
+			this._category.classList.add('card__category_optional');
+		} else if (value === 'кнопка') {
+			this._category.classList.add('card__category_button');
+		} else if (value === 'хард-скил') {
+			this._category.classList.add('card__category_hard');
+		}
 		this.setText(this._category, value);
 	}
 
+	get category(): string {
+		return this._category.textContent || '';
+	}
+
 	set price(value: string) {
-		//возможно тут ошибка нет у цены слова Синапсов
 		this.setText(this._price, String(value));
 	}
 
 	get price(): string {
-		//возможно тут ошибка
-		return this._price.textContent || '0';
+		//возможно тут ошибка нет у цены слова Синапсов
+		return this._price.textContent || 'нет цены';
 	}
 
 	set image(value: string) {
@@ -103,7 +117,7 @@ export class Card<T> extends Component<ICard<T>> {
 
 export class CatalogItem extends Card<IProduct> {
 	querySelector(arg0: string) {
-		throw new Error('Method not implemented.');
+		throw new Error('error');
 	}
 
 	constructor(container: HTMLElement, actions?: ICardActions) {
