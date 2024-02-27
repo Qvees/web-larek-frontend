@@ -69,9 +69,6 @@ events.on<CatalogChangeEvent>('items:changed', () => {
 		const card = new CatalogItem(cloneTemplate(cardCatalogTemplate), {
 			onClick: () => events.emit('card:select', item),
 		});
-		if (item.price === null) {
-			item.price = 0;
-		}
 		return card.render({
 			title: item.title,
 			image: item.image,
@@ -135,7 +132,7 @@ events.on('card:select', (item: ProductItem) => {
 		addToBasketButton.disabled = true;
 		addToBasketButton.classList.add('disabled');
 		addToBasketButton.textContent = 'Товар уже в корзине';
-	} else if (item.price === 0) {
+	} else if (item.price === null) {
 		addToBasketButton.disabled = true;
 		addToBasketButton.classList.add('disabled');
 		addToBasketButton.textContent = 'Товар временно недоступен';

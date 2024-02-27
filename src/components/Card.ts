@@ -88,12 +88,16 @@ export class Card<T> extends Component<ICard<T>> {
 	}
 
 	set price(value: string) {
-		this.setText(this._price, String(value));
+		if (value === null){
+			this.setText(this._price,'Нет цены')
+		}
+		else{
+		this.setText(this._price, `${value} Синапсов`,)
+		};
 	}
 
 	get price(): string {
-		//возможно тут ошибка нет у цены слова Синапсов
-		return this._price.textContent || 'нет цены';
+		return this._price.textContent;
 	}
 
 	set image(value: string) {
